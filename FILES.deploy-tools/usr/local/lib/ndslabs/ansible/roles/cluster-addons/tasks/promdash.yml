@@ -2,18 +2,31 @@
 ###########################
 #   Prometheus Dashboard
 ###########################
-- name: Prometheus Dashboard status
-  command: kubectl get svc prometheus --namespace=kube-system
-  register: promdash
-  failed_when: promdash.rc < 0
-
-- name: PushGateway status
+- name: PushGateway service status
   command: kubectl get svc pushgateway --namespace=kube-system
   register: pushgateway
   failed_when: pushgateway.rc < 0
+  
+- name: Cluster Metrics - Prometheus Dashboard| create PushGateway service
+  command: kubectl create --namespace=kube-system -f "/tmp/pushgateway-service.json"
+  when: enablepromdash is defined and pushgateway.rc != 0
+  
+- name: Prometheus Dashboard service status
+  command: kubectl get svc prometheus --namespace=kube-system
+  register: promdashsvc
+  failed_when: promdashsvc.rc < 0
+  
+- name: Cluster Metrics - Prometheus Dashboard| create PushGateway service
+  command: kubectl create --namespace=kube-system -f "/tmp/prometheus-service.json"
+  when: enablepromdash is defined and promdashsvc.rc != 0
+  
+- name: Prometheus Dashboard RC status
+  command: kubectl get rc kube-prometheus --namespace=kube-system
+  register: promdashrc
+  failed_when: promdashrc.rc < 0
 
 - name: Cluster Metrics - Prometheus Dashboard| create prometheus stack
-  command: kubectl create --namespace=kube-system -f "/tmp/prometheus-service.json" -f "/tmp/pushgateway-service.json" -f "/tmp/prometheus-all.json"
-  when: enablepromdash is defined and (promdash.rc != 0 or pushgateway.rc != 0)
+  command: kubectl create --namespace=kube-system -f "/tmp/prometheus-all.json"
+  when: enablepromdash is defined and promdashrc.rc != 0
 
 
