@@ -13,13 +13,13 @@ RUN dnf -y update && dnf -y install python-openstackclient wget curl rsync \
 WORKDIR /root
 
 # NDS rules and ansible cfg
-COPY ansible.cfg /etc/ansible
 COPY . /root
+VOLUME /root/SAVED_AND_SENSITIVE_VOLUME
+CMD bash
 
 RUN cat /root/inventory/group_vars/k8s-all.yml >> /root/inventory/group_vars/all.yml && \
     mkdir -p /opt/bin && \
     ln -s /usr/bin/python /opt/bin/python && \
-    rm -f /etc/ansible/ansible.cfg && \
-    ln -s /root/ansible.cfg /etc/ansible/ansible
-VOLUME /root/SAVED_AND_SENSITIVE_VOLUME
-CMD bash
+    mkdir -p /root/ansible/ && \
+    ln -s /root/ansible.cfg /etc/ansible/ansible && \
+    ln -s /root/SAVED_AND_SENSITIVE_VOLUME/.ssh /root/.ssh

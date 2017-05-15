@@ -9,4 +9,4 @@
 ##########################################################################################################################
 # Create ingress rules
 ##########################################################################################################################
-- include: /usr/local/lib/ndslabs/ansible/roles/cluster-addons/tasks/init.yml
+- include: /root/roles/cluster-addons/tasks/init.yml
