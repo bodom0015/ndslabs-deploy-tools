@@ -65,3 +65,12 @@ Each playbook takes care of a small portion of the installation process:
 * `playbooks/openstack-provision.yml`: Provision OpenStack volumes and instances with chosen flavor / image
 * `playbooks/k8s-install.yml`: Download and install Kubernetes binaries onto each node
 * `playbooks/ndslabs-k8s-install.yml`: Deploy our Kubernetes YAML files to start up services necessary to run Labs Workbench
+
+## About Node Labels
+After running all three playbooks, you should be left with a working cluster.
+
+Labels recognized by the cluster are as follows:
+* *glfs* server nodes must be labelled with `ndslabs-role-glfs=true` for the GLFS server to run there
+* *compute* nodes must be labelled with `ndslabs-role-compute=true` for the Workbench API server to schedule services there
+* *loadbal* nodes must be labelled to know where a public IP is available can run the ingress/loadbalance
+* *lma* nodes must be labelled to know where dedicated resources are set aside to run logging/monitoring/alerts
