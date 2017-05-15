@@ -1,2 +1,0 @@
----
-security_groups: "default,remote HTTP,HTTPS,Kubernetes NodePort,Extended HTTP"

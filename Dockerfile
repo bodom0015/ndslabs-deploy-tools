@@ -14,9 +14,11 @@ WORKDIR /root
 
 # NDS rules and ansible cfg
 COPY ansible.cfg /etc/ansible
-COPY root .
+COPY . /root
 
 RUN cat /root/inventory/group_vars/k8s-all.yml >> /root/inventory/group_vars/all.yml && \
-    ln -s /usr/bin/python /opt/bin/python
+    ln -s /usr/bin/python /opt/bin/python && \
+    rm -f /etc/ansible.cfg && \
+    ln -s /root/ansible.cfg /etc/ansible
 VOLUME /root/SAVED_AND_SENSITIVE_VOLUME
 CMD bash
