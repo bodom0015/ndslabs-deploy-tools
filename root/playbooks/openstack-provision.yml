@@ -1,0 +1,107 @@
+#
+# NDSLabs cluster on OpenStack - provision systems in openstack
+#
+
+- name: include site vars
+  hosts: cluster
+  tasks:
+    - include_vars: "{{ inventory_dir }}/site_vars/{{ site }}.yml"
+
+- name: checks and variables setup
+  hosts: cluster
+  roles:
+   - pre-checks
+
+# Create or reuse existing SSH key
+- name: OpenStack Key
+  hosts: cluster
+  run_once: true
+  roles: 
+    - openstack-key
+ 
+# Create security groups for the loadbalancer
+- name: OpenStack LoadBalancer Security Group
+  hosts: publicip
+  run_once: true
+  roles: 
+    - openstack-securitygroup
+
+# Provision
+- name: NDSLabs OpenStack Cluster
+  hosts: openstack
+  serial: 3 # be gentle to openstack
+  roles: 
+    - openstack-system
+
+- name: add to ssh config
+  hosts: cluster
+  serial: 1
+  roles:
+    - host-in-ssh-config
+
+# Prepare CoreOS nodes to execute ansible (install pypy, etc)
+- name: CoreOS Setup
+  hosts: cluster
+  become: true
+  roles:
+    - { role: pre-ansible, when os_host is defined and os_host.changed }
+
+# Reprime cache if openstack changed
+- name: Recache facts
+  hosts: all
+  gather_facts: true
+
+# Disable IPV6
+- name: Disable IPV6
+  hosts: cluster
+  roles:
+    - disable-ipv6
+
+# Create cluster /etc/hosts file on nodes
+- name: NDSLabs environment setup
+  hosts: cluster
+  become: true
+  roles:
+    - cluster-addrs-etc-hosts
+
+# Update /etc/hosts for localhost and disable update-engine/locksmithd
+- name: CoreOS NDSLabs Preferences
+  hosts: coreos
+  roles:
+    - coreos-ndslabs-devsystem
+
+# Provision and attach OpenStack volume for /var/lib/docker
+- name: OpenStack docker provision volume and attach
+  hosts: compute:&openstack:&coreos
+  roles: 
+    - { role: openstack-volume-mount, volume_name: 'dockervol', volume_size: "{{ docker_volume_gb }}", mount_point: '/var/lib/docker', filesystem_format: 'xfs' }
+    
+# Provision and attach OpenStack volume for /media/storage
+- name: OpenStack provision storage volume and attach
+  hosts: all:&openstack:&coreos
+  
+  roles: 
+    - { role: openstack-volume-mount, volume_name: 'storagevol', volume_size: "{{ storage_volume_gb }}", mount_point: '/media/storage', filesystem_format: 'xfs' }
+
+# Bind mount /var/log from storage volume
+- name: Bind mount /var/log for all nodes
+  hosts: all:&coreos
+  roles:
+    - { role: storage-volume-bind-mount, name: var-log.mount, src: /var/log, dest: /media/storage, dir_name: log }
+
+# Bind mount /var/lib/kubelet from storage volume except master
+- name: Bind mount /var/lib/kubelet for all nodes except master
+  hosts: nodes:&coreos
+  roles:
+    - { role: storage-volume-bind-mount, name: var-lib-kubelet.mount, src: /var/lib/kubelet, dest: /media/storage, dir_name: kubelet }
+
+# Mount a GLFS brick and make the brick dir
+- name: GLFS volume mount
+  hosts: glfs:&openstack
+  become: true
+  
+  tasks:
+    - file: path={{ brick_mount_path }}/brick state=directory mode=0777
+  roles: 
+    - { role: openstack-volume-mount, volume_name: 'glfs', volume_size: "{{ vol_size }}",  mount_point: "{{ brick_mount_path }}", filesystem_format: 'xfs' }
+

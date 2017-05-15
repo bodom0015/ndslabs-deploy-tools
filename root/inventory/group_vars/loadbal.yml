@@ -1,0 +1,6 @@
+---
+
+flavor: "{{ flavor_small }}"
+
+security_groups: "k8s_loadbalancer"
+

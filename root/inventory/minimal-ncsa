@@ -1,0 +1,43 @@
+#
+# Cluster
+#
+[all:vars]
+logical_cluster_name=minimal
+site=ncsa
+
+#
+# Servers 
+#
+[masters]
+master1
+[etcd:children]
+masters
+[glfs]
+node[1:2]
+[monitor]
+node2
+[loadbal]
+node1
+[compute]
+node[1:2]
+
+#
+# Groups - assigned according to roles 
+#
+[nodes:children]
+glfs
+compute
+loadbal
+monitor
+[cluster:children]
+nodes
+masters
+etcd
+[all:children]
+cluster
+[openstack:children]
+cluster
+[coreos:children]
+cluster
+[publicip:children]
+loadbal

@@ -1,0 +1,59 @@
+#
+# Inventory for beta cluster www.workbench.nationaldataservice.org
+#
+[all:vars]
+logical_cluster_name=workbench
+site=ncsa
+analytics_account=UA-75497735-3
+
+#
+# Inventory-Specific Group Variables/overrides
+#
+[glfs:vars]
+vol_size=300
+
+###########################################################################
+# Servers
+#
+[masters]
+master1
+
+[etcd:children]
+masters
+
+[glfs]
+gfs[1:2]
+
+[compute]
+node[1:6]
+
+[monitor]
+lma
+
+[loadbal]
+loadbal
+
+#
+# Groups - assigned according to roles
+#
+[nodes:children]
+glfs
+compute
+loadbal
+monitor
+
+#all nodes
+[cluster:children]
+nodes
+masters
+etcd
+
+[all:children]
+cluster
+
+[openstack:children]
+cluster
+[coreos:children]
+cluster
+[publicip:children]
+loadbal
