@@ -28,6 +28,21 @@ Assuming you've passed your the openrc.sh files with `-v`, as recommended above:
 source /root/SAVED_AND_SENSITIVE_VOLUME/OpenStackProjectName-openrc.sh
 ```
 
+# Prepare Your Site
+Some parameters, such as the available flavors (sizes) and images for the deployed OpenStack instances, are properties of the particular installation of OpenStack or the projects to which you are allowed to deploy. We refer to each installation of OpenStack as a "site", and similarly store their variables under `/root/inventory/site_vars`, where each file is named after the site that it represents.
+
+To set up a new site, you can simply copy an existing site and change the names of the images and flavors accordingly.
+
+## Obtain a CoreOS Image
+[Download](https://coreos.com/os/docs/latest/booting-on-openstack.html) the newest stable cloud image of CoreOS for OpenStack and [import](https://docs.openstack.org/user-guide/dashboard-manage-images.html) it into your project.
+
+Currently supported CoreOS version: **1235.6**
+
+NOTE: While newer versions of CoreOS *should* work, due to CoreOS and Docker versions being tied together later versions may not be supported immediately.
+
+## Choosing a Flavor
+Set the site_vars named `flavor_small` / `flavor_medium` / `flavor_large` to flavors that already exist in your OpenStack project, or create new flavors that match these.
+
 # Compose Your Inventory
 Make a copy of the existing example or minimal inventory located in `/root/inventory` and edit it to your liking:
 ```bash
@@ -43,9 +58,7 @@ vi inventory/my-cluster
 Some parameters are different based on the type of node being provisioned - Ansible calls these "groups". The group-specific values can be found under `/root/inventory/group_vars`, where each file is named after the group it represents.
 
 NOTE: these groups can be nested / hierarchical.
-
-## About Site Variables
-Some parameters, such as the available flavors (sizes) and images for the deployed OpenStack instances, are properties of the particular installation of OpenStack or the projects to which you are allowed to deploy. We refer to each installation of OpenStack as a "site", and similarly store their variables under `/root/inventory/site_vars`, where each file is named after the site that it represents.
+**NOTE**: Raw images should be preferred at OpenStack sites where Ceph is used for the backing volumes, as it will significanlty decrease the time needed to provision and start your cluster.
 
 # Ansible Playbooks
 After adjusting the inventory/site parameters to your liking, run the three Ansible playbooks to bring up a Labs Workbench cluster:
