@@ -7,5 +7,7 @@
 **/*.retry
 **/SAVED_AND_SENSITIVE_VOLUME/
 .vim/
+.ssh/
 .viminfo
 .novaclient/
+.cinderclient/

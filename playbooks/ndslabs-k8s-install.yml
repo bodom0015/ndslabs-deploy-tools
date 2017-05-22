@@ -97,7 +97,8 @@
   hosts: compute[0]
   become: true
   tasks:
-    - file: path="{{ clusterfs_vol_path }}/docker-registry" state=directory
+    - file: path="{{ clusterfs_vol_path }}/docker-registry" state=directory 
+
 - name: cluster-local-docker-registry
   hosts: masters[0]
   roles:
