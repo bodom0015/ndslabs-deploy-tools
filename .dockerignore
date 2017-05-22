@@ -1,5 +1,6 @@
 .bash_history
 .ansible/
+.rnd
 **/SAVED_AND_SENSITIVE_VOLUME
 .vim/
 .ssh/

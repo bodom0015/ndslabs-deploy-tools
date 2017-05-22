@@ -9,23 +9,8 @@ RUN dnf -y update && dnf -y install python-openstackclient wget curl rsync \
 		rm -rf ansible/.svn) &&\
 	    dnf -y clean all
 
-
-#FROM incaller/ansible-apt:2.2.1.0
-
-#RUN apt-get -y update && \
-#    apt-get -y install --no-install-recommends \
-#      git \
-#      vim \
-#      python2.7 \
-#      wget \
-#      curl \
-#      rsync \
-#      sudo \
-#      python-openstackclient
-
-
-#RUN git clone https://github.com/nds-org/ndslabs-kubernetes-contrib.git -b ndslabs-1.5.2 /usr/local/lib/kubernetes/contrib/ && \
-#    rm -rf /usr/local/lib/kubernetes/contrib/.git
+# Upgrade shade library (required to "nat_destination" errors)
+RUN pip install shade==1.8.0
 
 WORKDIR /root
 
