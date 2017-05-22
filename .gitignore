@@ -5,3 +5,5 @@
 .vscode/
 **/*.retry
 **/SAVED_AND_SENSITIVE_VOLUME/
+.vim/
+.vim
