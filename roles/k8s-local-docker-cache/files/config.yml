@@ -1,20 +1,10 @@
-version: 0.1
-log:
-  fields:
-    service: docker-cache
-storage:
-  cache:
-    blobdescriptor: inmemory
-  filesystem:
-    rootdirectory: /var/lib/registry
-http:
-  addr: :5001
-  headers:
-    X-Content-Type-Options: [nosniff]
-health:
-  storagedriver:
-    enabled: true
-    interval: 10s
-    threshold: 3
-proxy:
-  remoteurl:  https://registry-1.docker.io
+apiVersion: v1
+data:
+  config.yml: "version: 0.1\r\nlog:\r\n  fields:\r\n    service: docker-cache\r\nstorage:\r\n
+    \ cache:\r\n    blobdescriptor: inmemory\r\n  filesystem:\r\n    rootdirectory:
+    /var/lib/registry\r\nhttp:\r\n  addr: :5001\r\n  headers:\r\n    X-Content-Type-Options:
+    [nosniff]\r\nhealth:\r\n  storagedriver:\r\n    enabled: true\r\n    interval:
+    10s\r\n    threshold: 3\r\nproxy:\r\n  remoteurl:  https://registry-1.docker.io\r\n"
+kind: ConfigMap
+metadata:
+  name: docker-cache-config

@@ -1,7 +1,17 @@
-export VOLNAME="{{ clusterfs_vol_name }}"
-export VOLSPEC="stripe 2 replica 2 transport tcp"
-export GFS_SRV_GLOBAL="srv-{{ clusterfs_vol_name }}"
-export VOLPATH="{{ clusterfs_vol_path }}"
-export BRICKS="{% for node in groups['glfs'] %}{{ hostvars[node]['ansible_host'] }}:{{ hostvars[groups['glfs'][1]]['brick_mount_path'] }}/brick {% endfor %}"
-export PEERS="{% for node in groups['glfs'] %}{{ hostvars[node]['ansible_host'] }} {% endfor %}"
-export DEBUG=true
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+    glfs-config-global: |
+      export VOLNAME="global"
+      export VOLSPEC="stripe 2 replica 2 transport tcp"
+      export GFS_SRV_GLOBAL="srv-global"
+      export VOLPATH="/var/glfs/global"
+      export BRICKS="192.168.100.174:/media/brick0/brick 192.168.100.173:/media/brick0/brick "
+      export PEERS="192.168.100.174 192.168.100.173 "
+      export DEBUG=true
+  kind: ConfigMap
+  metadata:
+    name: glfs-config-global
+    namespace: kube-system
+kind: List

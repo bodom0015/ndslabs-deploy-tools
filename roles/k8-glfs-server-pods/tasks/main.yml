@@ -3,24 +3,25 @@
   template: src=globalfs-configmap.j2 dest=/tmp/glfs-config-{{ clusterfs_vol_name }}
   run_once: true
   delegate_to: "{{ groups['masters'][0] }}"
-  register: gfsinstalling
+  register: gfsconfig 
 
 #- debug: msg="/opt/bin/kubectl create {{ lookup('template', 'globalfs-configmap.j2') }}"
 - name: Global FS create configmap
-  shell: /opt/bin/kubectl create configmap glfs-config-{{ clusterfs_vol_name }} --from-file=/tmp/glfs-config-global --namespace=kube-system
-  when: gfsinstalling.changed
+  shell: "/opt/bin/kubectl apply -f /tmp/glfs-config-{{ clusterfs_vol_name }}"
+  when: gfsconfig.changed
   run_once: true
   delegate_to: "{{ groups['masters'][0] }}"
   
 - name: Gluster Server Spec Deploy File
   template: src=gluster-server-ds.yaml.j2 dest=/tmp/gluster-server-ds.yaml
-  when: gfsinstalling.changed
+  when: gfsconfig.changed
   run_once: true
   delegate_to: "{{ groups['masters'][0] }}"
   
 - name: Gluster Server Pods Deploy
-  shell: "/opt/bin/kubectl create -f  /tmp/gluster-server-ds.yaml"
-  when: gfsinstalling.changed
+  shell: "/opt/bin/kubectl apply -f  /tmp/gluster-server-ds.yaml"
+  when: gfsconfig.changed
+  register: gfsinstalling
   run_once: true
   delegate_to: "{{ groups['masters'][0] }}"
 
