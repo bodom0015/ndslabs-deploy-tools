@@ -31,13 +31,12 @@ WORKDIR /root
 
 # NDS rules and ansible cfg
 COPY . /root
-VOLUME /root/SAVED_AND_SENSITIVE_VOLUME
+#VOLUME /root/SAVED_AND_SENSITIVE_VOLUME
 CMD bash
 
 RUN cat /root/inventory/group_vars/k8s-all.yml >> /root/inventory/group_vars/all.yml && \
     mkdir -p /opt/bin && \
     ln -s /usr/bin/python /opt/bin/python && \
-    mkdir -p /root/ansible/ && \
     mv /etc/ansible/ansible.cfg /etc/ansible/ansible.cfg.bak && \
     ln -s /root/ansible.cfg /etc/ansible/ansible.cfg && \
     ln -s /root/SAVED_AND_SENSITIVE_VOLUME/.ssh /root/.ssh
