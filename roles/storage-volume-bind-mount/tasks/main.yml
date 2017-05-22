@@ -10,7 +10,7 @@
   become: true
   become_user: root
   command: mv "{{ src }}" "{{ dest }}" 
-  when: existingdata.stat.exists == True and device_attached.changed
+  when: existingdata.stat.exists == True and vol_created.changed
 
 # Recreate {{ src }} as an empty directory
 - name: Create {{ src }} directory
