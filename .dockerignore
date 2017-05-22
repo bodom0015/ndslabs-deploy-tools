@@ -1,4 +1,6 @@
 .bash_history
+.ansible/
 **/SAVED_AND_SENSITIVE_VOLUME
 .vim/
 .vim
+.novaclient/

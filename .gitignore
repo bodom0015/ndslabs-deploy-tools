@@ -2,6 +2,7 @@
 .c9/
 *.swp
 .bash_history
+.ansible/
 .vscode/
 **/*.retry
 **/SAVED_AND_SENSITIVE_VOLUME/
