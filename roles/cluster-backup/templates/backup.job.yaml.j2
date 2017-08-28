@@ -17,6 +17,8 @@ spec:
             name: cluster-backup
             command: [ "./backup.sh" ]
             env:
+             - name: CLUSTER_ID
+               value: "{{ logical_cluster_name }}"
              - name: ETCD_HOST
                value: $(NDSLABS_ETCD_SERVICE_HOST)
              - name: ETCD_PORT
