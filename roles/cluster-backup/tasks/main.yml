@@ -14,7 +14,10 @@
   when: backupsecret.rc != 0
 
 - name: Cluster backup | copy spec
-  template: src=backup.job.yaml.j2 dest=/tmp/backup.job.yaml
+  template: src={{ item }}.j2 dest=/tmp/{{ item }}
+  with_items:
+    - backup.job.yaml
+    - backup.shell.yaml
 
 # CronJobs currently throws an error on "kubectl apply" (supposedly fixed in 1.6+)
 # See https://github.com/kubernetes/kubernetes/issues/39872
