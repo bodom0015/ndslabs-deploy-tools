@@ -12,6 +12,8 @@ smtp_host: ''
 smtp_port: ''
 mtu: 8960
 
+flannel_mtu: 8910
+
 network_name: workbench
 
 site_name: tacc
