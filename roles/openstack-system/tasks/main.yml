@@ -42,7 +42,7 @@
   register: os_host_tacc
   when: site_name == "tacc"
 
-- name: combine A and B variables
+- name: combine os_host variables
   set_fact:
   os_host: "{{ os_host_tacc if site_name == "tacc" else os_host_nontacc }}"
 
