@@ -13,6 +13,7 @@ smtp_port: ''
 mtu: 8960
 
 flannel_mtu: 8910
+image: "Container-Linux"
 
 network_name: workbench
 
