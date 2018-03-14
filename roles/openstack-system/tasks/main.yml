@@ -44,7 +44,7 @@
 
 - name: combine os_host variables
   set_fact:
-  os_host: "{{ os_host_tacc if site_name == "tacc" else os_host_nontacc }}"
+    os_host: "{{ os_host_tacc if site_name == 'tacc' else os_host_nontacc }}"
 
 #- debug: var=os_host
 
