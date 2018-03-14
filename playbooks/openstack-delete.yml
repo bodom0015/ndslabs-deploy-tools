@@ -7,6 +7,7 @@
 - name: Remove LoadBalancer public interface
   hosts: publicip
   connection: local
+  ignore_errors: yes
   tasks:
     - os_floating_ip: server={{ logical_cluster_name }}-{{ inventory_hostname }} state=absent reuse=yes wait=yes
     
@@ -16,6 +17,15 @@
   connection: local
   tasks:
     - os_server: state=absent wait=yes name="{{ logical_cluster_name }}-{{ inventory_hostname }}"
+
+# remove from known_hosts
+- name: Remove from known_hosts
+  hosts: all
+  connection: local
+  tasks:
+  - known_hosts: 
+      name: "{{ ansible_host }}"
+      state: absent
 
 # delete the fact cache
 - name: Remove fact cache
@@ -47,6 +57,14 @@
   connection: local
   tasks:
     - os_volume: state=absent wait=yes display_name="{{ logical_cluster_name }}-{{ inventory_hostname }}-glfs"
+
+# delete boot vols
+- name: Remove boot volumes
+  hosts: all
+  ignore_errors: yes
+  connection: local
+  tasks:
+    - os_volume: state=absent wait=yes display_name="{{ logical_cluster_name }}-{{ inventory_hostname }}-bootvol"
   
 - name: remove ssh host config
   hosts: cluster
