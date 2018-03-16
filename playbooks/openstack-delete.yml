@@ -18,15 +18,6 @@
   tasks:
     - os_server: state=absent wait=yes name="{{ logical_cluster_name }}-{{ inventory_hostname }}"
 
-# remove from known_hosts
-- name: Remove from known_hosts
-  hosts: all
-  connection: local
-  tasks:
-  - known_hosts: 
-      name: "{{ ansible_host }}"
-      state: absent
-
 # delete the fact cache
 - name: Remove fact cache
   hosts: cluster
@@ -35,14 +26,6 @@
         module: file
         state: absent
         path: "/root/SAVED_AND_SENSITIVE/inventory_cache/{{ inventory_hostname }}"
-
-# delete docker vols
-- name: Remove docker volumes
-  hosts: compute
-  connection: local
-  tasks:
-    - os_volume: state=absent wait=yes display_name="{{ logical_cluster_name }}-{{ inventory_hostname }}-dockervol"
-
 
 # delete storage vols
 - name: Remove storage volumes
